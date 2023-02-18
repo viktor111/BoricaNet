@@ -31,7 +31,7 @@ var borica = new Borica(boricaData);
 var paymentPayload = borica.GeneratePayload();
 ```
 
-3. Or generate html form as string directly with hiddeen input
+3. Or generate html form as string directly with hidden input
 - Using `isDev: true` will generate with borica's dev url
 - Using `isDev: false` will generate with borica production url
 ```csharp
