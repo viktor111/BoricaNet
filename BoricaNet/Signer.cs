@@ -1,22 +1,19 @@
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 
-namespace Euroins.Payment.Services.Shared;
+namespace BoricaNet;
 
-public class Signer : ISigner
+internal class Signer
 {
-    private const string PathToPfx = "Config/keystore_test.pfx";
-    private const string PathToCer = "Config/V6200275-euroins.com-T.cer";
-    
     private readonly RSA _privateKey;
     private readonly RSA _publicKey;
     
-    public Signer()
+    public Signer(string privateKeyFilePath, string privateKeyPassword, string publicKeyFilePath)
     {
-        var pfx = new X509Certificate2(PathToPfx, "viktor11", X509KeyStorageFlags.Exportable);
+        var pfx = new X509Certificate2(privateKeyFilePath, privateKeyPassword, X509KeyStorageFlags.Exportable);
         _privateKey = pfx.GetRSAPrivateKey() ?? throw new Exception("Private key not found");
         
-        var certificate = new X509Certificate2(PathToCer);
+        var certificate = new X509Certificate2(publicKeyFilePath);
         _publicKey = certificate.GetRSAPublicKey() ?? throw new Exception("Public key not found");
     }
 

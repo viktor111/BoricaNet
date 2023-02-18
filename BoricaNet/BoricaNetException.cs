@@ -1,11 +1,11 @@
 namespace BoricaNet;
 
-public class CustomException : Exception
+public class BoricaNetException : Exception
 {
-    public CustomException() { }
+    public BoricaNetException() { }
 
-    public CustomException(string message) : base(message) { }
+    public BoricaNetException(string message) : base(message) { }
 
-    public CustomException(string message, Exception innerException)
+    public BoricaNetException(string message, Exception innerException)
         : base(message, innerException) { }
 }

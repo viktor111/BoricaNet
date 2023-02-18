@@ -5,12 +5,12 @@ using static BoricaNet.Constants;
 
 namespace BoricaNet;
 
-public class BoricaNet
+public class Borica
 {
     private readonly Signer _signer;
     private readonly BoricaNetParams _boricaNetParams;
     
-    public BoricaNet(BoricaNetParams boricaNetParams)
+    public Borica(BoricaNetParams boricaNetParams)
     {
         _boricaNetParams = boricaNetParams;
         _signer = new Signer(
@@ -19,13 +19,13 @@ public class BoricaNet
             publicKeyFilePath: boricaNetParams.PathToPublicKeyPath);
     }
 
-    public BoricaPaymentPayload GenerateBoricaPayload()
+    public BoricaPaymentPayload GeneratePayload()
     {
         var payload = GenerateBoricaPayloadData();
         return payload;
     }
     
-    public string GenerateBoricaForm(bool isDev)
+    public string GenerateForm(bool isDev)
     {
         var payload = GenerateBoricaPayloadData();
         
@@ -33,6 +33,53 @@ public class BoricaNet
         var form = GenerateHtmlForm.GenerateHTMLForm(payloadToJson, isDev);
         
         return form;
+    }
+
+    public BoricaResponsePayload HandleResponse(Dictionary<string, string> formBody)
+    {
+        var response = new BoricaResponse();
+        
+        var responsePayload = BoricaResponsePayload.FromBodyForm(formBody);
+        
+        response.Payload = responsePayload;
+        
+        var signatureData = GenerateSignatureDataForResponse(responsePayload);
+        var signatureBytes = Encoding.UTF8.GetBytes(signatureData);
+        
+        var validSignature = VerifyBoricaResponse(signatureBytes, responsePayload.Signature);
+        
+        if (!validSignature)
+        {
+            response.ResponseType = BoricaPaymentResponseType.Error;
+            response.Message = "Invalid signature";
+            return responsePayload;
+        }
+        
+        switch (responsePayload.Rc)
+        {
+            case "65":
+            case "1A":
+                response.ResponseType = BoricaPaymentResponseType.SoftDecline;
+                break;
+            case "00":
+                response.ResponseType = BoricaPaymentResponseType.Success;
+                response.Message = "Successful payment";
+                break;
+            default:
+                response.ResponseType = BoricaPaymentResponseType.Error;
+                response.Message = "Invalid payment";
+                break;
+        }
+        
+        return responsePayload;
+    }
+    
+    private bool VerifyBoricaResponse(byte[] messageData, string signature)
+    {
+        var signatureData = DecodeMessage(signature);
+
+        var signatureFlag = _signer.VerifySignature(messageData, signatureData);
+        return signatureFlag;
     }
 
     private BoricaPaymentPayload GenerateBoricaPayloadData()
@@ -63,7 +110,7 @@ public class BoricaNet
         
         return boricaPaymentPayload;
     }
-    
+
     private string GenerateNonce()
     {
         var nonceBytes = Generator.GenerateRandomByteArray(16, 16);
@@ -127,6 +174,36 @@ public class BoricaNet
         return data;
     }
     
+    private string GenerateSignatureDataForResponse(BoricaResponsePayload response) {
+        switch (response.TransactionCode) {
+            case TransactionCode1:
+            case TransactionCode12:
+            case TransactionCode21:
+            case TransactionCode22:
+            case TransactionCode24:
+            case TransactionCode90:
+                return GeneratePayload(new List<string>{
+                    response.Action, 
+                    response.Rc, 
+                    response.Approval,
+                    response.TerminalId, 
+                    response.TransactionCode,
+                    response.Amount,
+                    response.Currency,
+                    response.OrderID,
+                    response.Rrn, 
+                    response.IntRef,
+                    response.ParesStatus,
+                    response.Eci, 
+                    response.TransactionTime,
+                    response.Nonce,
+                    response.Rfu
+                });
+            default:
+                throw new BoricaNetException("Transaction code not valid. Cannot create signature for response");
+        }
+    }
+    
     private List<string> GetParametersForSignatureRequest(BoricaPaymentPayload boricaPaymentPayload, string transactionDate)
     {
         List<string> signatureParameters;
@@ -159,7 +236,7 @@ public class BoricaNet
                 };
                 break;
             default:
-                throw new Exception("Transaction code not valid. Cannot create signature");
+                throw new BoricaNetException("Transaction code not valid. Cannot create signature for request");
         }
 
         return signatureParameters;

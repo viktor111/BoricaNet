@@ -1,6 +1,8 @@
 namespace BoricaNet;
 
-public class BoricaPaymentResponseType
+public enum BoricaPaymentResponseType
 {
-    
+    Success,
+    Error,
+    SoftDecline,
 }
