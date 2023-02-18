@@ -1,5 +1,5 @@
 # BoricaNet
-Client libary for borica in .Net
+Client library for borica in .Net
 
 ## Example request
 1. Create params
