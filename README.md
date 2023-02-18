@@ -1,5 +1,5 @@
 # BoricaNet
-Client library for borica in .Net
+Library for borica in .Net
 
 ## Download
 `dotnet add package BoricaNet`
