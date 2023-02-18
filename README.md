@@ -41,3 +41,16 @@ The formBody should is the response submited from borica after payment on your e
 var paymentResponse = borica.HandleResponse(formBody: new Dictionary<string, string>());
 ```
 - `paymentResponse` will cointain the payload data inside if you want to handle the error checks yourself
+
+## Resources 
+- Documentation used 4.0
+- [Borica resources](https://3dsgate-dev.borica.bg/)
+- [Download Borica test public key](https://3dsgate-dev.borica.bg/MPI_OW_APGW_D.zip)
+- [Download Borica production public key](https://3dsgate-dev.borica.bg/MPI_OW_APGW_Prod.zip)
+- [Borica key generator for sign request](https://3dsgate-dev.borica.bg/generateCSR/)
+
+## openssl commands to convert keys
+1. Generate cer file form csr and private.key
+   - ```openssl x509 -req -in [.csr] -signkey [.key] -out certificate.cer```
+2. Generate pfx file from cer and private.key
+   - ```openssl pkcs12 -export -inkey [.key] -in [.cer] -out key-store.pfx```
