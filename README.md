@@ -39,7 +39,7 @@ var paymentPayload = borica.GenerateForm(isDev: true);
 ```
 
 ## Example response
-The formBody should is the response submited from borica after payment on your endpoint
+The formBody is the response submited from borica after payment on your endpoint
 ```csharp
 var paymentResponse = borica.HandleResponse(formBody: new Dictionary<string, string>());
 ```
