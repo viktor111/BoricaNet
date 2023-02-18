@@ -9,7 +9,7 @@ public class Borica
 {
     private readonly Signer _signer;
     private readonly BoricaNetParams _boricaNetParams;
-    
+
     public Borica(BoricaNetParams boricaNetParams)
     {
         _boricaNetParams = boricaNetParams;
@@ -35,7 +35,7 @@ public class Borica
         return form;
     }
 
-    public BoricaResponsePayload HandleResponse(Dictionary<string, string> formBody)
+    public BoricaResponse HandleResponse(Dictionary<string, string> formBody)
     {
         var response = new BoricaResponse();
         
@@ -52,7 +52,7 @@ public class Borica
         {
             response.ResponseType = BoricaPaymentResponseType.Error;
             response.Message = "Invalid signature";
-            return responsePayload;
+            return response;
         }
         
         switch (responsePayload.Rc)
@@ -71,7 +71,7 @@ public class Borica
                 break;
         }
         
-        return responsePayload;
+        return response;
     }
     
     private bool VerifyBoricaResponse(byte[] messageData, string signature)

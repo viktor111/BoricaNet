@@ -8,12 +8,12 @@ public class BoricaNetParams
         string privateKeyPassword, 
         string email,
         string terminalId,
-        string transactionCode,
         string description,
         string merchantUrl,
         string merchantName,
         string merchant,
         string amount,
+        string transactionCode="1",
         string language = "BG",
         string country = "BG",
         string currency = "BGN"
