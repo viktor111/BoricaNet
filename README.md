@@ -1,6 +1,9 @@
 # BoricaNet
 Client library for borica in .Net
 
+## Download
+`dotnet add package BoricaNet`
+
 ## Example request
 1. Create params
 ```csharp
