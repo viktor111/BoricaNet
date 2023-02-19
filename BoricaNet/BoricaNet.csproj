@@ -4,7 +4,27 @@
         <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <Title>BoricaNet</Title>
+        <Description>Library for borica payments</Description>
+        <PackageProjectUrl>https://github.com/viktor111/BoricaNet</PackageProjectUrl>
+        <PackageIcon>secure-payment-icon.png</PackageIcon>
+        <Copyright>MIT</Copyright>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <RepositoryUrl>https://github.com/viktor111/BoricaNet</RepositoryUrl>
+        <PackageTags>payment;borica;provider</PackageTags>
+        <Version>1.0.1</Version>
     </PropertyGroup>
+
+    <ItemGroup>
+      <None Include="..\..\..\..\Users\viktor.draganov\Downloads\secure-payment-icon.png">
+        <Pack>True</Pack>
+        <PackagePath>\</PackagePath>
+      </None>
+      <None Include="..\README.md">
+        <Pack>True</Pack>
+        <PackagePath>\</PackagePath>
+      </None>
+    </ItemGroup>
 
     <ItemGroup>
       <PackageReference Include="Newtonsoft.Json" Version="13.0.3-beta1" />

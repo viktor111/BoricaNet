@@ -4,3 +4,11 @@ obj/
 riderModule.iml
 /_ReSharper.Caches/
 .idea/.idea.BoricaNet/.idea/
+
+.vs/BoricaNet/DesignTimeBuild/
+
+.vs/BoricaNet/FileContentIndex/
+
+.vs/ProjectEvaluation/
+
+.vs/BoricaNet/v17/
