@@ -9,7 +9,7 @@ public class Borica
 {
     private readonly Signer _signer;
     private readonly BoricaNetParams _boricaNetParams;
-
+    
     public Borica(BoricaNetParams boricaNetParams)
     {
         _boricaNetParams = boricaNetParams;
@@ -25,14 +25,64 @@ public class Borica
         return payload;
     }
     
+    public BoricaPaymentPayload GeneratePayload(int orderId)
+    {
+        var payload = GenerateBoricaPayloadData(orderId);
+        return payload;
+    }
+    
     public string GenerateForm(bool isDev)
     {
         var payload = GenerateBoricaPayloadData();
         
         var payloadToJson = JsonConvert.SerializeObject(payload);
         var form = GenerateHtmlForm.GenerateHTMLForm(payloadToJson, isDev);
-        
+
         return form;
+    }
+    
+    public string GenerateForm(bool isDev, int orderId)
+    {
+        var payload = GenerateBoricaPayloadData(orderId);
+        
+        var payloadToJson = JsonConvert.SerializeObject(payload);
+        var form = GenerateHtmlForm.GenerateHTMLForm(payloadToJson, isDev);
+
+        return form;
+    }
+    
+    public async Task<BoricaStatusCheckResponse> CheckStatusForOrder(HttpClient httpClient, BoricaCheckStatusParams statusParams, bool isDev = false)
+    {
+        var nonce = GenerateNonce();
+        
+        var payload = new BoricaStatusRequest{
+            TerminalId = statusParams.TerminalId,
+            OrderId = statusParams.OrderId,
+            Nonce = nonce,
+            OriginalTransactionCode = statusParams.OriginalTransactionCode,
+            TransactionCode = TransactionCode90
+        };
+
+        SignPayloadStatusCheck(payload);
+
+        var url = isDev ? "https://3dsgate-dev.borica.bg/cgi-bin/cgi_lin" : "https://3dsgate.borica.bg/cgi-bin/cgi_lin";
+        
+        var data = new FormUrlEncodedContent(new[] {
+            new KeyValuePair<string, string>("TERMINAL", payload.TerminalId),
+            new KeyValuePair<string, string>("TRTYPE", payload.TransactionCode),
+            new KeyValuePair<string, string>("ORDER", payload.OrderId),
+            new KeyValuePair<string, string>("TRAN_TRTYPE", payload.OriginalTransactionCode),
+            new KeyValuePair<string, string>("NONCE", payload.Nonce),
+            new KeyValuePair<string, string>("P_SIGN", payload.PSign)
+        });
+        
+        var response = await httpClient.PostAsync(url, data);
+        
+        var responseString = await response.Content.ReadAsStringAsync();
+        
+        var responsePayload = JsonConvert.DeserializeObject<BoricaStatusCheckResponse>(responseString);
+        
+        return responsePayload ?? throw new BoricaNetException("Null response from Borica");
     }
 
     public BoricaResponse HandleResponse(Dictionary<string, string> formBody)
@@ -110,12 +160,39 @@ public class Borica
         
         return boricaPaymentPayload;
     }
+    
+    private BoricaPaymentPayload GenerateBoricaPayloadData(int orderId)
+    {
+        var date = DateHelper.FormatDateForBorica(DateTime.UtcNow);
+        var nonce = GenerateNonce();
+        var adBorCustOrderId = orderId+"ORDER";
+        
+        var boricaPaymentPayload = new BoricaPaymentPayload(
+            amount: _boricaNetParams.Amount,
+            currency: _boricaNetParams.Currency,
+            orderDescription: _boricaNetParams.Description,
+            orderId: orderId.ToString(),
+            country: _boricaNetParams.Country,
+            email: _boricaNetParams.Email,
+            merchantId: _boricaNetParams.Merchant,
+            merchantName: _boricaNetParams.MerchantName,
+            merchantUrl: _boricaNetParams.MerchantUrl,
+            terminalId: _boricaNetParams.TerminalId,
+            transactionCode: _boricaNetParams.TransactionCode,
+            timezone: date,
+            transactionDate: date,
+            nonce: nonce,adBorCustOrderId: adBorCustOrderId
+        );
+        
+        boricaPaymentPayload.PSign = GetSignatureFromParams(boricaPaymentPayload);
+        
+        return boricaPaymentPayload;
+    }
 
     private string GenerateNonce()
     {
         var nonceBytes = Generator.GenerateRandomByteArray(16, 16);
         var nonce = Generator.GenerateHexStringFromByteArray(nonceBytes);
-
         return nonce;
     }
     
@@ -172,6 +249,20 @@ public class Borica
         }
 
         return data;
+    }
+    
+    private void SignPayloadStatusCheck(BoricaStatusRequest payload)
+    {
+        var signatureParameters = new List<string>()
+        {
+            payload.TerminalId,
+            payload.TransactionCode,
+            payload.OrderId,
+            payload.Nonce
+        };
+
+        var test = GenerateSignature(signatureParameters);
+        payload.PSign = test;
     }
     
     private string GenerateSignatureDataForResponse(BoricaResponsePayload response) {
