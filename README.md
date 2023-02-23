@@ -1,3 +1,4 @@
+![](https://github.com/viktor111/BoricaNet/actions/workflows/dotnet.yml/badge.svg)
 # BoricaNet
 Library for borica in .Net
 
