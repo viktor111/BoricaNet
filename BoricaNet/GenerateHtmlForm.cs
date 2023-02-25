@@ -4,18 +4,18 @@ namespace BoricaNet;
 
 internal static class GenerateHtmlForm
 {
-    public static string GenerateHTMLForm(string json, bool isDev)
+    public static string GenerateHTMLForm(string json, string id = "borica-form", bool isDev = false)
     {
         var obj = JObject.Parse(json);
 
         string html;
         if (isDev)
         {
-            html = "<form method=\"post\" action=\"https://3dsgate-dev.borica.bg/cgi-bin/cgi_link\">";
+            html = $"<form id={id} method=\"post\" action=\"https://3dsgate-dev.borica.bg/cgi-bin/cgi_link\">";
         }
         else
         {
-            html = "<form method=\"post\" action=\"https://3dsgate.borica.bg/cgi-bin/cgi_link\">";
+            html = $"<form id={id} method=\"post\" action=\"https://3dsgate.borica.bg/cgi-bin/cgi_link\">";
         }
 
         foreach (var property in obj.Properties())
