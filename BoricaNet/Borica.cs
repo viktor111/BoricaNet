@@ -35,7 +35,7 @@ public class Borica
         var payload = GenerateBoricaPayloadData();
         
         var payloadToJson = JsonConvert.SerializeObject(payload);
-        var form = GenerateHtmlForm.GenerateHTMLForm(payloadToJson, isDev);
+        var form = GenerateHtmlForm.GenerateHTMLForm(payloadToJson);
 
         return form;
     }
@@ -45,7 +45,7 @@ public class Borica
         var payload = GenerateBoricaPayloadData(orderId);
         
         var payloadToJson = JsonConvert.SerializeObject(payload);
-        var form = GenerateHtmlForm.GenerateHTMLForm(payloadToJson, isDev);
+        var form = GenerateHtmlForm.GenerateHTMLForm(payloadToJson);
 
         return form;
     }
