@@ -40,6 +40,14 @@ internal static class Generator
 
         var randomNumber = BitConverter.ToInt32(hash, 0) % 900000 + 100000;
 
+        
+        var str = Math.Abs(randomNumber);
+
+        if (str.ToString().Length < 6)
+        {
+            return GenerateOrderNumber(nonce);
+        }
+        
         return Math.Abs(randomNumber);
     }
 
