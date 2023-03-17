@@ -1,4 +1,4 @@
-namespace BoricaNet;
+namespace BoricaNet.Exceptions;
 
 public class BoricaNetException : Exception
 {

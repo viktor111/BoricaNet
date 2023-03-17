@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace BoricaNet;
+namespace BoricaNet.Helpers;
 
 internal static class Generator
 {

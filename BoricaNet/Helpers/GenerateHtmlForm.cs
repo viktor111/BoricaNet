@@ -1,6 +1,6 @@
 using Newtonsoft.Json.Linq;
 
-namespace BoricaNet;
+namespace BoricaNet.Helpers;
 
 internal static class GenerateHtmlForm
 {

@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 
-namespace BoricaNet;
+namespace BoricaNet.Core;
 
 internal class Signer
 {

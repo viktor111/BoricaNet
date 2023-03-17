@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace BoricaNet;
+namespace BoriscaNet.Dto;
 
 internal class BoricaStatusRequest
 {

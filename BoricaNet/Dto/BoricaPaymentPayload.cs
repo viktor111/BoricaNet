@@ -1,7 +1,7 @@
 using Newtonsoft.Json;
 using static BoricaNet.Constants;
 
-namespace BoricaNet;
+namespace BoricaNet.Dto;
 
 public class BoricaPaymentPayload
 {

@@ -1,4 +1,4 @@
-namespace BoricaNet;
+namespace BoricaNet.Dto;
 
 public class BoricaCheckStatusParams
 {

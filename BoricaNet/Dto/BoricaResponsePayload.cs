@@ -1,6 +1,7 @@
+using BoricaNet.Exceptions;
 using Newtonsoft.Json;
 
-namespace BoricaNet;
+namespace BoricaNet.Dto;
 
 public class BoricaResponsePayload
 {

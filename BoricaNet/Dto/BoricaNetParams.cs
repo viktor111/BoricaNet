@@ -1,4 +1,6 @@
-namespace BoricaNet;
+using BoricaNet.Exceptions;
+
+namespace BoricaNet.Dto;
 
 public class BoricaNetParams
 {

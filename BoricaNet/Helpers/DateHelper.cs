@@ -1,4 +1,4 @@
-namespace BoricaNet;
+namespace BoricaNet.Helpers;
 
 internal static class DateHelper
 {
