@@ -54,7 +54,7 @@ public class Borica
         var payload = GenerateBoricaPayloadData();
         
         var payloadToJson = JsonConvert.SerializeObject(payload);
-        var form = GenerateHtmlForm.GenerateHTMLForm(payloadToJson, isDev);
+        var form = FormGenerator.GenerateHTMLForm(payloadToJson, isDev);
 
         return form;
     }
@@ -70,7 +70,7 @@ public class Borica
         var payload = GenerateBoricaPayloadData(orderId);
         
         var payloadToJson = JsonConvert.SerializeObject(payload);
-        var form = GenerateHtmlForm.GenerateHTMLForm(payloadToJson, isDev);
+        var form = FormGenerator.GenerateHTMLForm(payloadToJson, isDev);
 
         return form;
     }
@@ -389,7 +389,7 @@ public class Borica
     private string GenerateNonce()
     {
         var nonceBytes = Generator.GenerateRandomByteArray(16, 16);
-        var nonce = Generator.GenerateHexStringFromByteArray(nonceBytes);
+        var nonce = Generator.ByteArrayToHexString(nonceBytes);
         return nonce;
     }
     
@@ -426,7 +426,7 @@ public class Borica
         var parametersJoined = GeneratePayload(parameters);
         
         var sign = _signer.CreateSignature(Encoding.UTF8.GetBytes(parametersJoined));
-        return Generator.GenerateHexStringFromByteArray(sign);
+        return Generator.ByteArrayToHexString(sign);
     }
     
     private byte[] DecodeMessage(string encodedMsg)

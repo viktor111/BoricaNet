@@ -2,7 +2,7 @@ using Newtonsoft.Json.Linq;
 
 namespace BoricaNet.Helpers;
 
-internal static class GenerateHtmlForm
+internal static class FormGenerator
 {
     public static string GenerateHTMLForm(string json, bool isDev)
     {

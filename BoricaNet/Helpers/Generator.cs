@@ -61,7 +61,7 @@ internal static class Generator
             throw new BoricaNetException($"{nameof(minLength)} must be non-negative.");
 
         if (maxLength < minLength)
-            throw new ArgumentOutOfRangeException($"{nameof(maxLength)} must be greater than or equal to minLength.");
+            throw new BoricaNetException($"{nameof(maxLength)} must be greater than or equal to minLength.");
     }
 
     private static int GetRandomLength(RandomNumberGenerator random, int minLength, int maxLength)
