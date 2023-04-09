@@ -47,7 +47,8 @@ var paymentResponse = borica.HandleResponse(formBody: new Dictionary<string, str
 - `paymentResponse` will cointain the payload data inside if you want to handle the error checks yourself
 
 ## Example order status check
-Sends a request to borica with the order id to check the status of the order
+Sends a request to borica with the order id to check the status of the order. Borica will save the order id for 24hrs only.
+
 ```csharp
  var statusCheckParams = new BoricaCheckStatusParams
  {
@@ -79,6 +80,10 @@ var paymentPayloadForm = borica.GenerateForm(isDev: true, orderId: 123456);
 - [Download Borica test public key](https://3dsgate-dev.borica.bg/MPI_OW_APGW_D.zip)
 - [Download Borica production public key](https://3dsgate-dev.borica.bg/MPI_OW_APGW_Prod.zip)
 - [Borica key generator for sign request](https://3dsgate-dev.borica.bg/generateCSR/)
+
+### Borica urls that process the requests
+- Borica test url `https://3dsgate-dev.borica.bg/cgi-bin/cgi_link`
+- Borica production url `https://3dsgate.borica.bg/cgi-bin/cgi_link`
 
 ## openssl commands to convert keys
 1. Generate cer file form csr and private.key
