@@ -13,7 +13,7 @@
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <RepositoryUrl>https://github.com/viktor111/BoricaNet</RepositoryUrl>
         <PackageTags>payment;borica;provider</PackageTags>
-        <Version>1.0.8</Version>
+        <Version>1.0.9</Version>
     </PropertyGroup>
 
     <ItemGroup>
