@@ -12,8 +12,8 @@
         <Copyright>MIT</Copyright>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <RepositoryUrl>https://github.com/viktor111/BoricaNet</RepositoryUrl>
-        <PackageTags>payment;borica;provider</PackageTags>
-        <Version>1.0.9</Version>
+        <PackageTags>payment;borica;provider;3ds;onlinepayments</PackageTags>
+        <Version>1.0.10</Version>
     </PropertyGroup>
 
     <ItemGroup>

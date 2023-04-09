@@ -159,6 +159,11 @@ public class Borica
         return response;
     }
 
+    /// <summary>
+    /// Get the response type based on the action from borica
+    /// </summary>
+    /// <param name="action"></param>
+    /// <returns></returns>
     public BoricaPaymentResponseType GetResponseTypeByAction(string action)
     {
         BoricaPaymentResponseType response;
