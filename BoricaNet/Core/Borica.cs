@@ -31,29 +31,29 @@ public class Borica
     /// <summary>
     /// Generates payload with data for Borica payment
     /// </summary>
-    /// <returns>BoricaPaymentPayload</returns>
+    /// <returns>The borica payment paload containing the data needed to start a payment to borica</returns>
     public BoricaPaymentPayload GeneratePayload()
     {
         var payload = GenerateBoricaPayloadData();
         return payload;
     }
-    
+
     /// <summary>
     /// Generates payload with data for Borica payment with custom orderId
     /// </summary>
     /// <param name="orderId">Custom orderId</param>
-    /// <returns>BoricaPaymentPayload</returns>
+    /// <returns>The borica payment paload containing the data needed to start a payment to borica</returns>
     public BoricaPaymentPayload GeneratePayload(int orderId)
     {
         var payload = GenerateBoricaPayloadData(orderId);
         return payload;
     }
-    
+
     /// <summary>
     /// Generates form filled with data for Borica payment as string
     /// </summary>
     /// <param name="isDev">Decides to use dev url or prod url for borica</param>
-    /// <returns>string</returns>
+    /// <returns>The borica payment form as string with all the inputs hidden and filled with data needed to start a payment to borica</returns>
     public string GenerateForm(bool isDev)
     {
         var payload = GenerateBoricaPayloadData();
@@ -63,13 +63,13 @@ public class Borica
 
         return form;
     }
-    
+
     /// <summary>
     /// Generates form filled with data for Borica payment as string
     /// </summary>
     /// <param name="isDev">Decides to use dev url or prod url for borica</param>
     /// <param name="orderId">Custom orderId</param>
-    /// <returns>string</returns>
+    /// <returns>The borica payment form as string with all the inputs hidden and filled with data needed to start a payment to borica</returns>
     public string GenerateForm(bool isDev, int orderId)
     {
         var payload = GenerateBoricaPayloadData(orderId);
@@ -81,12 +81,12 @@ public class Borica
     }
     
     /// <summary>
-    /// Generates form filled with data for Borica payment as string
+    /// Querries borica for the status of the given order
     /// </summary>
     /// <param name="httpClient">The HttpClient used to make the request to borica API</param>
     /// <param name="statusParams">The parameters needed to send to borica</param>
     /// <param name="isDev">Decides to use dev url or prod url for borica default will be prod</param>
-    /// <returns>string</returns>
+    /// <returns>The data from borica of the given order</returns>
     public async Task<BoricaStatusCheckResponse> CheckStatusForOrder(HttpClient httpClient, BoricaCheckStatusParams statusParams, bool isDev = false)
     {
         var nonce = GenerateNonce();
@@ -123,14 +123,10 @@ public class Borica
 
     /// <summary>
     /// Generates form filled with data for Borica payment as string
+    /// To get the formBody from the request in Post action method
+    /// [FromForm] Dictionary string, string> formBody
     /// </summary>
     /// <param name="formBody">The data submitted from boricas custom form to yor backend</param>
-    /// <example>
-    /// Use this example to get the formBody from the request in Post action method
-    /// <code>
-    /// [FromForm] Dictionary string, string> formBody
-    /// </code>
-    /// </example>
     /// <returns>string</returns>
     public BoricaResponse HandleResponse(Dictionary<string, string> formBody)
     {
@@ -194,6 +190,11 @@ public class Borica
         return response;
     }
     
+    /// <summary>
+    /// Helper method that gives message in English and Bulgarian based on the RC(Response Code) returned from Borica
+    /// </summary>
+    /// <param name="rc"></param>
+    /// <returns>Object with message values in Engilsh and Bulgarian</returns>
     public BoricaMessageContent GetMessageByRc(string rc)
     {
         var response = new BoricaMessageContent();
