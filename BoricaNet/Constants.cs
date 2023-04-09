@@ -53,7 +53,7 @@ internal static class Constants
         public const string Code00En = "Success";
         public const string Code00Bg = "Успешна транзакция";
 
-        public const string Code_1En = "A mandatory request field is not filled i";
+        public const string Code_1En = "A mandatory request field is not filled";
         public const string Code_1Bg = "Заявката съдържа поле с некоректно име";
 
         public const string Code_2En = "CGI request validation failed";
@@ -131,8 +131,8 @@ internal static class Constants
         public const string Code_31En = "Transaction already in progress";
         public const string Code_31Bg = "Трансакцията е в процес на обрбаотка";
 
-        public const string Code_32En = "Customer authentication by random amount or verify one-time code in progress";
-        public const string Code_32Bg = "Трансакцията е в процес на аутентикация на картодържателя";
+        public const string Code_32En = "Duplicate declined transaction";
+        public const string Code_32Bg = "Дублирана отказана трансакция";
 
         public const string Code_33En = "Customer authentication by random amount or verify one-time code in progress";
         public const string Code_33Bg = "Трансакцията е в процес на аутентикация на картодържателя";
