@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netstandard2.1</TargetFramework>
+		<TargetFrameworks>netstandard2.0;netstandard2.1;net5.0;net6.0;net7.0</TargetFrameworks>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <LangVersion>11</LangVersion>
@@ -17,7 +17,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <None Include="..\..\..\..\Users\viktor.draganov\Downloads\secure-payment-icon.png">
+      <None Include="C:\Users\vikto\Downloads\secure-payment-icon.png">
         <Pack>True</Pack>
         <PackagePath>\</PackagePath>
       </None>
