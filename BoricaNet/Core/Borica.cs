@@ -5,7 +5,12 @@ using BoricaNet.Helpers;
 using BoricaNet.Types;
 using BoriscaNet.Dto;
 using Newtonsoft.Json;
+
 using static BoricaNet.Constants;
+using static BoricaNet.Constants.ResponseCodeMessages;
+using static BoricaNet.Constants.ResponseCodes;
+using static BoricaNet.Constants.ActionCodes;
+using static BoricaNet.Constants.BoricaErrorMessages;
 
 namespace BoricaNet.Core;
 
@@ -96,15 +101,15 @@ public class Borica
 
         SignPayloadStatusCheck(payload);
 
-        var url = isDev ? "https://3dsgate-dev.borica.bg/cgi-bin/cgi_lin" : "https://3dsgate.borica.bg/cgi-bin/cgi_lin";
+        var url = isDev ? BoricaDevUrl : BoricaProdUrl;
         
         var data = new FormUrlEncodedContent(new[] {
-            new KeyValuePair<string, string>("TERMINAL", payload.TerminalId),
-            new KeyValuePair<string, string>("TRTYPE", payload.TransactionCode),
-            new KeyValuePair<string, string>("ORDER", payload.OrderId),
-            new KeyValuePair<string, string>("TRAN_TRTYPE", payload.OriginalTransactionCode),
-            new KeyValuePair<string, string>("NONCE", payload.Nonce),
-            new KeyValuePair<string, string>("P_SIGN", payload.PSign)
+            new KeyValuePair<string, string>(BoricaParamNames.Terminal, payload.TerminalId),
+            new KeyValuePair<string, string>(BoricaParamNames.TrType, payload.TransactionCode),
+            new KeyValuePair<string, string>(BoricaParamNames.Order, payload.OrderId),
+            new KeyValuePair<string, string>(BoricaParamNames.TranTrType, payload.OriginalTransactionCode),
+            new KeyValuePair<string, string>(BoricaParamNames.Nonce, payload.Nonce),
+            new KeyValuePair<string, string>(BoricaParamNames.PSign, payload.PSign)
         });
         
         var response = await httpClient.PostAsync(url, data);
@@ -113,7 +118,7 @@ public class Borica
         
         var responsePayload = JsonConvert.DeserializeObject<BoricaStatusCheckResponse>(responseString);
         
-        return responsePayload ?? throw new BoricaNetException("Null response from Borica");
+        return responsePayload ?? throw new BoricaNetException(NullResponseFromBorica);
     }
 
     /// <summary>
@@ -143,8 +148,8 @@ public class Borica
         if (!validSignature)
         {
             response.ResponseType = BoricaPaymentResponseType.Error;
-            response.MessageEn = "Invalid signature";
-            response.MessageBg = "Невалиден подпис";
+            response.MessageEn = InvalidSignatureEn;
+            response.MessageBg = InvalidSignatureBg;
             return response;
         }
 
@@ -160,25 +165,25 @@ public class Borica
 
     public BoricaPaymentResponseType GetResponseTypeByAction(string action)
     {
-        var response = BoricaPaymentResponseType.Error;
+        BoricaPaymentResponseType response;
         switch (action)
         {
-            case "0":
+            case AC0:
                 response = BoricaPaymentResponseType.Success;
                 break;
-            case "1":
+            case AC1:
                 response = BoricaPaymentResponseType.Duplicate;
                 break;
-            case "2":
+            case AC2:
                 response = BoricaPaymentResponseType.Refused;
                 break;
-            case "3":
+            case AC3:
                 response = BoricaPaymentResponseType.Error;
                 break;
-            case "7":
+            case AC7:
                 response = BoricaPaymentResponseType.DuplicateWithBadAuth;
                 break;
-            case "21":
+            case AC21:
                 response = BoricaPaymentResponseType.SoftDecline;
                 break;
             default:
@@ -195,126 +200,126 @@ public class Borica
         
         switch (rc)
         {
-            case "00":
-                response.MessageEn = "Success";
-                response.MessageBg = "Успешна транзакция";
+            case RC00:
+                response.MessageEn = Code00En;
+                response.MessageBg = Code00Bg;
                 break;
-            case "-1":
-                response.MessageEn = "A mandatory request field is not filled in";
-                response.MessageBg = "Заявката съдържа поле с некоректно име";
+            case RC_1:
+                response.MessageEn = Code_1En;
+                response.MessageBg = Code_1Bg;
                 
                 break;
-            case "-2":
-                response.MessageEn = "CGI request validation failed";
-                response.MessageBg = "Aвторизационният хост не отговаря или форматът на отговора е неправилен";
+            case RC_2:
+                response.MessageEn = Code_2En;
+                response.MessageBg = Code_2Bg;
                 break;
-            case "-4":
-                response.MessageEn = "No connection to the acquirer host (TS)";
-                response.MessageBg = "Няма връзка с авторизационния хост";
+            case RC_4:
+                response.MessageEn = Code_4En;
+                response.MessageBg = Code_4Bg;
                 break;
-            case "-5":
-                response.MessageEn = "Acquirer host (TS) does not respond or wrong format of e-gateway response template file";
-                response.MessageBg = "Грешка във връзката с авторизационния хост";
+            case RC_5:
+                response.MessageEn = Code_5En;
+                response.MessageBg = Code_5Bg;
                 break;
-            case "-6":
-                response.MessageEn = "e-Gateway configuration error";
-                response.MessageBg = "Грешка в конфигурацията на APGW";
+            case RC_6:
+                response.MessageEn = Code_6En;
+                response.MessageBg = Code_6Bg;
                 break;
-            case "-7":
-                response.MessageEn = "The acquirer host (TS) response is invalid, e.g. mandatory fields missing";
-                response.MessageBg = "Форматът на отговора от авторизационният хост е неправилен";
+            case RC_7:
+                response.MessageEn = Code_7En;
+                response.MessageBg = Code_7Bg;
                 break;
-            case "-10":
-                response.MessageEn = "Error in the \"Amount\" request field";
-                response.MessageBg = "Грешка в поле \"Сума\" в заявката";
+            case RC_10:
+                response.MessageEn = Code_10En;
+                response.MessageBg = Code_10Bg;
                 break;
-            case "-11":
-                response.MessageEn = "Error in the \"Currency\" request field";
-                response.MessageBg = "Грешка в поле \"Валута\" в заявката";
+            case RC_11:
+                response.MessageEn = Code_11En;
+                response.MessageBg = Code_11Bg;
                 break;
-            case "-12":
-                response.MessageEn = "Error in the \"Merchant ID\" request field";
-                response.MessageBg = "Грешка в поле \"Идентификатор на търговеца\" в заявката";
+            case RC_12:
+                response.MessageEn = Code_12En;
+                response.MessageBg = Code_12Bg;
                 break;
-            case "-13":
-                response.MessageEn = "The referrer IP address (usually the merchant's IP) is not the one expected";
-                response.MessageBg = "Неправилен IP адрес на търговеца";
+            case RC_13:
+                response.MessageEn = Code_13En;
+                response.MessageBg = Code_13Bg;
                 break;
-            case "-15":
-                response.MessageEn = "Error in the \"RRN\" request field";
-                response.MessageBg = "Грешка в поле \"RRN\" в заявката";
+            case RC_15:
+                response.MessageEn = Code_15En;
+                response.MessageBg = Code_15Bg;
                 break;
-            case "-16":
-                response.MessageEn = "Another transaction is being performed on the terminal";
-                response.MessageBg = "В момента се изпълнява друга трансакция на терминала";
+            case RC_16:
+                response.MessageEn = Code_16En;
+                response.MessageBg = Code_16Bg;
                 break;
-            case "-17":
-                response.MessageEn = "The terminal is denied access to e-Gateway";
-                response.MessageBg = "Отказан достъп до платежния сървър (напр. грешка при проверка на P_SIGN)";
+            case RC_17:
+                response.MessageEn = Code_17En;
+                response.MessageBg = Code_17Bg;
                 break;
-            case "-19":
-                response.MessageEn = "Error in the authentication information request or authentication failed.";
-                response.MessageBg = "Грешка в искането за автентикация или неуспешна автентикация";
+            case RC_19:
+                response.MessageEn = Code_19En;
+                response.MessageBg = Code_19Bg;
                 break;
-            case "-20":
-                response.MessageEn = "The permitted time interval (1 hour by default) between the transaction timestamp request field and the e-Gateway time was exceeded";
-                response.MessageBg = "Разрешената разлика между времето на сървъра на търговеца и e-Gateway сървъра е надвишена";
+            case RC_20:
+                response.MessageEn = Code_20En;
+                response.MessageBg = Code_20Bg;
                 break;
-            case "-21":
-                response.MessageEn = "The transaction has already been executed";
-                response.MessageBg = "Трансакцията вече е била изпълнена";
+            case RC_21:
+                response.MessageEn = Code_21En;
+                response.MessageBg = Code_21Bg;
                 break;
-            case "-22":
-                response.MessageEn = "Transaction contains invalid authentication information";
-                response.MessageBg = "Транзакцията съдържа невалидни данни за аутентикация";
+            case RC_22:
+                response.MessageEn = Code_22En;
+                response.MessageBg = Code_22Bg;
                 break;
-            case "-23":
-                response.MessageEn = "Invalid transaction context";
-                response.MessageBg = "Невалиден контекст на транзакцията";
+            case RC_23:
+                response.MessageEn = Code_23En;
+                response.MessageBg = Code_23Bg;
                 break;
-            case "-24":
-                response.MessageEn = "Transaction context data mismatch";
-                response.MessageBg = "Заявката съдържа стойности за полета, които не могат да бъдат обработени. Например валутата е различна от валутата на терминала или транзакцията е по-стара от 24 часа";
+            case RC_24:
+                response.MessageEn = Code_24En;
+                response.MessageBg = Code_24Bg;
                 break;
-            case "-25":
-                response.MessageEn = "Transaction confirmation state was canceled by user";
-                response.MessageBg = "Допълнителното потвърждение на трансакцията е отказано от картодържателя";
+            case RC_25:
+                response.MessageEn = Code_25En;
+                response.MessageBg = Code_25Bg;
                 break;
-            case "-26":
-                response.MessageEn = "Invalid action BIN";
-                response.MessageBg = "Невалиден BIN на картата";
+            case RC_26:
+                response.MessageEn = Code_26En;
+                response.MessageBg = Code_26Bg;
                 break;
-            case "-27":
-                response.MessageEn = "Invalid merchant name";
-                response.MessageBg = "Невалидно име на търговеца";
+            case RC_27:
+                response.MessageEn = Code_27En;
+                response.MessageBg = Code_27Bg;
                 break;
-            case "-28":
-                response.MessageEn = "Invalid incoming addendum(s)";
-                response.MessageBg = "Невалидно допълнително поле (например AD.CUST_BOR_ORDER_ID)";
+            case RC_28:
+                response.MessageEn = Code_28En;
+                response.MessageBg = Code_28Bg;
                 break;
-            case "-29":
-                response.MessageEn = "Invalid/duplicate authentication reference";
-                response.MessageBg = "Невалиден отговор от ACS на издателя на картат";
+            case RC_29:
+                response.MessageEn = Code_29En;
+                response.MessageBg = Code_29Bg;
                 break;
-            case "-30":
-                response.MessageEn = "Transaction was declined as fraud";
-                response.MessageBg = "Трансакцията е отказана";
+            case RC_30:
+                response.MessageEn = Code_30En;
+                response.MessageBg = Code_30Bg;
                 break;
-            case "-31":
-                response.MessageEn = "Transaction already in progress";
-                response.MessageBg = "Трансакцията е в процес на обрбаотка";
+            case RC_31:
+                response.MessageEn = Code_31En;
+                response.MessageBg = Code_31Bg;
                 break;
-            case "-32":
-                response.MessageEn = "Duplicate declined transaction";
-                response.MessageBg = "Дублирана отказана трансакция";
+            case RC_32:
+                response.MessageEn = Code_32En;
+                response.MessageBg = Code_32Bg;
                 break;
-            case "-33":
-                response.MessageEn = "Customer authentication by random amount or verify one-time code in progress";
-                response.MessageBg = "Трансакцията е в процес на аутентикация на картодържателя";
+            case RC_33:
+                response.MessageEn = Code_33En;
+                response.MessageBg = Code_33Bg;
                 break;
             default:
-                response.MessageEn = "Error in the transaction";
-                response.MessageBg = "Грешка в транзакцията";
+                response.MessageEn = CodeDefaultEn;
+                response.MessageBg = CodeDefaultBg;
                 break;
         }
         
@@ -334,7 +339,7 @@ public class Borica
         var date = DateHelper.FormatDateForBorica(DateTime.UtcNow);
         var nonce = GenerateNonce();
         var orderId = Generator.GenerateOrderNumber(nonce).ToString();
-        var adBorCustOrderId = orderId+"ORDER";
+        var adBorCustOrderId = orderId + Order;
         
         var boricaPaymentPayload = new BoricaPaymentPayload(
             amount: _boricaNetParams.Amount,
@@ -362,7 +367,7 @@ public class Borica
     {
         var date = DateHelper.FormatDateForBorica(DateTime.UtcNow);
         var nonce = GenerateNonce();
-        var adBorCustOrderId = orderId+"ORDER";
+        var adBorCustOrderId = orderId + Order;
         
         var boricaPaymentPayload = new BoricaPaymentPayload(
             amount: _boricaNetParams.Amount,
@@ -435,7 +440,7 @@ public class Borica
         
         if (len % 2 != 0)
         {
-            throw new Exception("Message not hex encoded");
+            throw new BoricaNetException(MessageNotHexEncoded);
         }
         
         var data = new byte[len / 2];
@@ -488,7 +493,7 @@ public class Borica
                     response.Rfu
                 });
             default:
-                throw new BoricaNetException("Transaction code not valid. Cannot create signature for response");
+                throw new BoricaNetException(TransactionCodeNotValidResponse);
         }
     }
     
@@ -524,7 +529,7 @@ public class Borica
                 };
                 break;
             default:
-                throw new BoricaNetException("Transaction code not valid. Cannot create signature for request");
+                throw new BoricaNetException(TransactionCodeNotValidRequest);
         }
 
         return signatureParameters;
